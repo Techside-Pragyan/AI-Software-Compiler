@@ -2,11 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { CheckCircle, Circle, Loader2, AlertTriangle, XCircle } from "lucide-react";
+import { CheckCircle, Circle, Loader2, AlertTriangle } from "lucide-react";
 
 interface PipelineVisualizerProps {
   status: "idle" | "compiling" | "success" | "error";
-  metrics: any;
+  metrics: unknown;
 }
 
 const STAGES = [
@@ -51,7 +51,7 @@ export default function PipelineVisualizer({ status, metrics }: PipelineVisualiz
         )}
 
         <div className="relative z-10 flex flex-col space-y-4">
-          {STAGES.map((stage, i) => {
+          {STAGES.map((stage) => {
             const isStageDone = isComplete;
             const isCurrent = isCompiling;
             return (
@@ -70,9 +70,9 @@ export default function PipelineVisualizer({ status, metrics }: PipelineVisualiz
          <div className="mt-8 bg-red-950/20 border border-red-900/50 rounded-xl p-4">
             <h3 className="text-red-400 font-bold mb-2 flex items-center text-sm"><AlertTriangle className="w-4 h-4 mr-2" /> Repair Actions ({metrics.failures.length})</h3>
             <div className="space-y-2 max-h-32 overflow-y-auto pr-2">
-              {metrics.failures.map((f: any, i: number) => (
+              {(metrics as Record<string, any>).failures.map((f: Record<string, unknown>, i: number) => (
                 <div key={i} className="text-xs text-gray-300 bg-[#0f172a] p-2 rounded border border-red-900/30">
-                  <span className="text-red-400 font-bold">Attempt {f.attempt} ({f.schema}):</span> {f.error}
+                  <span className="text-red-400 font-bold">Attempt {f.attempt as number} ({f.schema as string}):</span> {f.error as string}
                 </div>
               ))}
             </div>
