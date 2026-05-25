@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface UiComponent {
-  name: str;
-  type: str;
+  name: string;
+  type: string;
   props?: Record<string, any>;
   children?: string[];
 }
