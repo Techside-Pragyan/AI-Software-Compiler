@@ -21,7 +21,8 @@ export default function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/projects");
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/projects`);
       if (res.ok) {
         const data = await res.json();
         setProjects(data);
@@ -42,7 +43,8 @@ export default function Dashboard() {
     setMetrics(null);
 
     try {
-      const res = await fetch("http://localhost:8000/api/compile", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/compile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
@@ -79,7 +81,8 @@ export default function Dashboard() {
         auth_rules_json: JSON.stringify(schema.auth_rules || []),
       };
 
-      const res = await fetch("http://localhost:8000/api/projects", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -97,7 +100,8 @@ export default function Dashboard() {
 
   const loadProject = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/projects/${id}`);
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const res = await fetch(`${API_URL}/api/projects/${id}`);
       if (!res.ok) throw new Error("Failed to load project");
       const data = await res.json();
       setPrompt(data.prompt);
