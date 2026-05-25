@@ -24,7 +24,7 @@ export default function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects`);
       if (res.ok) {
         const data = await res.json();
@@ -47,7 +47,7 @@ export default function Dashboard() {
     setMetrics(null);
 
     try {
-      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/compile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -78,14 +78,17 @@ export default function Dashboard() {
       const payload = {
         name: projectName,
         prompt: prompt,
-        intent_json: JSON.stringify(schema.intent),
-        database_schema_json: JSON.stringify(schema.database_schema),
-        api_schema_json: JSON.stringify(schema.api_schema),
-        ui_schema_json: JSON.stringify(schema.ui_schema),
+        intent_json: JSON.stringify(schema.intent || {}),
+        system_design_json: JSON.stringify(schema.system_design || {}),
+        database_schema_json: JSON.stringify(schema.database_schema || {}),
+        api_schema_json: JSON.stringify(schema.api_schema || {}),
+        ui_schema_json: JSON.stringify(schema.ui_schema || {}),
         auth_rules_json: JSON.stringify(schema.auth_rules || []),
+        business_logic_json: JSON.stringify(schema.business_logic || {}),
+        metrics_json: JSON.stringify(metrics || {}),
       };
 
-      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -104,7 +107,7 @@ export default function Dashboard() {
 
   const loadProject = async (id: number) => {
     try {
-      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects/${id}`);
       if (!res.ok) throw new Error("Failed to load project");
       const data = await res.json();
@@ -112,12 +115,14 @@ export default function Dashboard() {
       setProjectName(data.name);
       setSchema({
         intent: data.intent,
+        system_design: data.system_design,
         database_schema: data.database_schema,
         api_schema: data.api_schema,
         ui_schema: data.ui_schema,
-        auth_rules: data.auth_rules
+        auth_rules: data.auth_rules,
+        business_logic: data.business_logic
       });
-      setMetrics(null);
+      setMetrics(data.metrics);
     } catch (e: unknown) {
       alert((e as Error).message);
     }
