@@ -5,7 +5,7 @@ import RuntimePreview from "@/components/RuntimePreview";
 import DatabasePreview from "@/components/DatabasePreview";
 import ApiPreview from "@/components/ApiPreview";
 import PipelineVisualizer from "@/components/PipelineVisualizer";
-import { Loader2, Zap, Layout, Code2, Database, Server, Save, FolderOpen, AlertCircle } from "lucide-react";
+import { Loader2, Zap, Layout, Code2, Database, Server, Save, FolderOpen, AlertCircle, Download } from "lucide-react";
 
 export default function Dashboard() {
   const [prompt, setPrompt] = useState("Build a Habit Tracker app with premium tiers, daily check-ins, and Stripe integration. Include a user dashboard, a subscription form, and a chat interface.");
@@ -115,6 +115,17 @@ export default function Dashboard() {
     }
   };
 
+  const handleExport = () => {
+    if (!schema) return;
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(schema, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", (projectName || "compiler_output") + ".json");
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
   return (
     <div className="flex min-h-screen bg-[#0f172a] text-white font-sans overflow-hidden">
       
@@ -191,14 +202,23 @@ export default function Dashboard() {
                   onChange={(e) => setProjectName(e.target.value)}
                   className="w-full bg-[#0f172a] border border-[#334155] rounded-xl p-3 text-sm text-gray-200 focus:ring-2 focus:ring-green-500 outline-none mb-4"
                 />
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
-                >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
-                  {saving ? "Saving..." : "Save to Workspace"}
-                </button>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
+                  >
+                    {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
+                    {saving ? "Saving..." : "Save"}
+                  </button>
+                  <button
+                    onClick={handleExport}
+                    className="flex-1 bg-[#334155] hover:bg-[#475569] text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all"
+                  >
+                    <Download className="w-5 h-5 mr-2" />
+                    Export JSON
+                  </button>
+                </div>
               </div>
             )}
           </div>
