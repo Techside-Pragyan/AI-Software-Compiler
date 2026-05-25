@@ -40,7 +40,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#0f172a] text-white font-sans p-8 flex flex-col">
       <header className="mb-8 flex items-center space-x-3">
         <Zap className="w-8 h-8 text-blue-500" />
-        <h1 className="text-3xl font-extrabold tracking-tight">Antigravity Compiler</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">Nexus App Compiler</h1>
         <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded-full font-medium">Pipeline v1.0</span>
       </header>
 
