@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 interface UiComponent {
   name: string;
   type: string;
-  props?: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  props?: Record<string, any>;
   children?: string[];
 }
 
@@ -41,7 +42,7 @@ export default function RuntimePreview({ schema }: { schema: UiSchema | null }) 
         return (
           <div key={idx} className="p-6 bg-white shadow rounded-xl border border-gray-100">
             <h3 className="text-lg font-bold">{comp.name}</h3>
-            {comp.props?.description && <p className="text-sm text-gray-600 mt-2">{comp.props.description}</p>}
+            {comp.props?.description && <p className="text-sm text-gray-600 mt-2">{String(comp.props.description)}</p>}
           </div>
         );
       case "list":
