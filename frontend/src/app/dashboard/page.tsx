@@ -12,12 +12,15 @@ export default function Dashboard() {
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [schema, setSchema] = useState<unknown>(null);
-  const [metrics, setMetrics] = useState<unknown>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [schema, setSchema] = useState<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [metrics, setMetrics] = useState<any>(null);
   const [error, setError] = useState("");
   
   const [activeTab, setActiveTab] = useState<"ui" | "db" | "api" | "metrics">("ui");
-  const [projects, setProjects] = useState<unknown[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [projects, setProjects] = useState<any[]>([]);
 
   const fetchProjects = async () => {
     try {
