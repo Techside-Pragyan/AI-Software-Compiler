@@ -10,7 +10,7 @@ class RepairEngine:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY is not set.")
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = "gemini-2.5-pro"
+        self.model_name = "gemini-2.0-flash"
         self.max_retries = max_retries
         self.metrics = {"retries": 0, "failures": []}
 

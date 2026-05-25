@@ -10,7 +10,7 @@ class DatabaseSchemaGenerator:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY is not set.")
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = "gemini-2.5-pro"
+        self.model_name = "gemini-2.0-flash"
 
     def generate(self, intent: IntentSchema, system_design: SystemDesignSchema) -> DatabaseSchema:
         system_instruction = (

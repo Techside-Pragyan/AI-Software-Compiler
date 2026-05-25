@@ -9,7 +9,7 @@ class IntentExtractor:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY is not set.")
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = "gemini-2.5-pro" # Use a capable model for complex extraction
+        self.model_name = "gemini-2.0-flash" # Use a capable model for complex extraction
 
     def extract_intent(self, prompt: str) -> IntentSchema:
         """
