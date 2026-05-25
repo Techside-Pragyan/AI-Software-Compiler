@@ -224,6 +224,12 @@ export default function Dashboard() {
               >
                 <Server className="w-4 h-4 mr-2" /> API Endpoints
               </button>
+              <button 
+                onClick={() => setActiveTab("metrics")}
+                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'metrics' ? 'border-green-500 text-green-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
+              >
+                <Database className="w-4 h-4 mr-2" /> Metrics
+              </button>
             </div>
             
             <div className="flex-1 p-0 bg-gray-100 overflow-hidden relative">
@@ -238,6 +244,31 @@ export default function Dashboard() {
                {activeTab === "api" && (
                  <div className="h-full overflow-y-auto p-8 bg-white/50 text-gray-900">
                    <ApiPreview schema={schema ? schema.api_schema : null} />
+                 </div>
+               )}
+               {activeTab === "metrics" && (
+                 <div className="h-full overflow-y-auto p-8 bg-[#1e293b] text-white">
+                   <h2 className="text-2xl font-bold mb-4">Compiler Metrics</h2>
+                   {metrics ? (
+                     <div className="space-y-4">
+                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
+                         <h3 className="text-gray-400 mb-1">Total Retries</h3>
+                         <p className="text-3xl font-bold text-yellow-400">{metrics.retries}</p>
+                       </div>
+                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
+                         <h3 className="text-gray-400 mb-1">Failures Repaired</h3>
+                         <p className="text-3xl font-bold text-green-400">{metrics.failures?.length || 0}</p>
+                       </div>
+                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
+                          <h3 className="text-gray-400 mb-2">Repair Logs</h3>
+                          <pre className="text-xs text-gray-300 overflow-x-auto">
+                            {JSON.stringify(metrics.failures, null, 2)}
+                          </pre>
+                       </div>
+                     </div>
+                   ) : (
+                     <p className="text-gray-500">No metrics available. Compile an application first.</p>
+                   )}
                  </div>
                )}
             </div>
