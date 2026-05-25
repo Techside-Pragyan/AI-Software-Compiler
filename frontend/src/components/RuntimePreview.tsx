@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface UiComponent {
   name: string;
   type: string;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
   children?: string[];
 }
 
