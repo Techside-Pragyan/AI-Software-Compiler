@@ -12,12 +12,12 @@ export default function Dashboard() {
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [schema, setSchema] = useState<any>(null);
-  const [metrics, setMetrics] = useState<any>(null);
+  const [schema, setSchema] = useState<unknown>(null);
+  const [metrics, setMetrics] = useState<unknown>(null);
   const [error, setError] = useState("");
   
   const [activeTab, setActiveTab] = useState<"ui" | "db" | "api" | "metrics">("ui");
-  const [projects, setProjects] = useState<any[]>([]);
+  const [projects, setProjects] = useState<unknown[]>([]);
 
   const fetchProjects = async () => {
     try {
@@ -34,6 +34,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCompile = async () => {
@@ -56,8 +57,8 @@ export default function Dashboard() {
       setSchema(data.data);
       setMetrics(data.metrics);
       setActiveTab("ui");
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError((err as Error).message);
     } finally {
       setLoading(false);
     }
@@ -91,8 +92,8 @@ export default function Dashboard() {
       if (!res.ok) throw new Error("Failed to save project");
       alert("Project saved successfully!");
       fetchProjects();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err: unknown) {
+      alert((err as Error).message);
     } finally {
       setSaving(false);
     }
@@ -114,8 +115,8 @@ export default function Dashboard() {
         auth_rules: data.auth_rules
       });
       setMetrics(null);
-    } catch (e: any) {
-      alert(e.message);
+    } catch (e: unknown) {
+      alert((e as Error).message);
     }
   };
 
