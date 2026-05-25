@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.compiler.pipeline import CompilerPipeline
 from pydantic import BaseModel
 
-app = FastAPI(title="AI Application Compiler API")
+app = FastAPI(title="Nexus Application Compiler API")
 
 app.add_middleware(
     CORSMiddleware,
