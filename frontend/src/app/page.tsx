@@ -25,7 +25,7 @@ export default function Dashboard() {
       });
       
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Failed to compile");
+      if (!res.ok) throw new Error(data.detail || "Failed to build");
       
       setSchema(data.data);
       setMetrics(data.metrics);
