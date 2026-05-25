@@ -31,35 +31,38 @@ export default function PipelineVisualizer({ status, metrics }: PipelineVisualiz
         Pipeline Visualization
       </h2>
 
-      <div className="relative w-full overflow-x-auto pb-4 hide-scrollbar">
-        <div className="min-w-[600px] relative px-4">
-          <div className="absolute top-5 left-8 right-8 h-1 bg-[#334155] z-0 rounded-full" />
-          {isCompiling && (
-             <motion.div 
-               className="absolute top-5 left-8 h-1 bg-blue-500 z-0 rounded-full"
-               initial={{ width: "0%" }}
-               animate={{ width: "calc(100% - 4rem)" }}
-               transition={{ duration: 15, ease: "linear" }}
-             />
-          )}
-          {isComplete && (
-             <div className="absolute top-5 left-8 right-8 h-1 bg-green-500 z-0 rounded-full" />
-          )}
+      <div className="relative w-full mt-4">
+        {/* Background vertical line */}
+        <div className="absolute top-4 bottom-4 left-5 w-1 bg-[#334155] z-0 rounded-full" />
+        
+        {/* Animated compiling line */}
+        {isCompiling && (
+           <motion.div 
+             className="absolute top-4 left-5 w-1 bg-blue-500 z-0 rounded-full"
+             initial={{ height: "0%" }}
+             animate={{ height: "100%" }}
+             transition={{ duration: 15, ease: "linear" }}
+           />
+        )}
+        
+        {/* Success line */}
+        {isComplete && (
+           <div className="absolute top-4 bottom-4 left-5 w-1 bg-green-500 z-0 rounded-full" />
+        )}
 
-          <div className="relative z-10 flex justify-between">
-            {STAGES.map((stage, i) => {
-              const isStageDone = isComplete;
-              const isCurrent = isCompiling;
-              return (
-                <div key={stage} className="flex flex-col items-center">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-[#0f172a] border-4 z-10 relative ${isStageDone ? 'border-green-500 text-green-500' : isCurrent ? 'border-blue-500 text-blue-500 animate-pulse' : 'border-[#334155] text-gray-500'}`}>
-                    {isStageDone ? <CheckCircle className="w-5 h-5" /> : isCurrent ? <Loader2 className="w-5 h-5 animate-spin" /> : <Circle className="w-5 h-5" />}
-                  </div>
-                  <span className="text-xs text-gray-400 mt-2 font-semibold w-20 text-center">{stage}</span>
+        <div className="relative z-10 flex flex-col space-y-4">
+          {STAGES.map((stage, i) => {
+            const isStageDone = isComplete;
+            const isCurrent = isCompiling;
+            return (
+              <div key={stage} className="flex items-center space-x-4">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-[#0f172a] border-4 flex-shrink-0 z-10 relative ${isStageDone ? 'border-green-500 text-green-500' : isCurrent ? 'border-blue-500 text-blue-500 animate-pulse' : 'border-[#334155] text-gray-500'}`}>
+                  {isStageDone ? <CheckCircle className="w-5 h-5" /> : isCurrent ? <Loader2 className="w-5 h-5 animate-spin" /> : <Circle className="w-5 h-5" />}
                 </div>
-              );
-            })}
-          </div>
+                <span className="text-sm text-gray-300 font-semibold">{stage}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
       
