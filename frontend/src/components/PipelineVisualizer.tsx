@@ -31,7 +31,7 @@ export default function PipelineVisualizer({ status, metrics }: PipelineVisualiz
         Pipeline Visualization
       </h2>
 
-      <div className="relative w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-[#334155] scrollbar-track-transparent">
+      <div className="relative w-full overflow-x-auto pb-4 hide-scrollbar">
         <div className="min-w-[600px] relative px-4">
           <div className="absolute top-5 left-8 right-8 h-1 bg-[#334155] z-0 rounded-full" />
           {isCompiling && (
