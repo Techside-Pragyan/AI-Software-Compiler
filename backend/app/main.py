@@ -37,6 +37,10 @@ class SaveProjectRequest(BaseModel):
     business_logic_json: str
     metrics_json: str
 
+@app.get("/")
+async def root():
+    return {"message": "AI Software Compiler API is running. The frontend is deployed separately."}
+
 @app.post("/api/compile")
 async def compile_application(request: CompileRequest):
     try:
