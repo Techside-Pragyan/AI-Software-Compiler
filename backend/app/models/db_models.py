@@ -11,7 +11,11 @@ class Project(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     intent_json = Column(Text, nullable=True)
+    system_design_json = Column(Text, nullable=True)
     database_schema_json = Column(Text, nullable=True)
     api_schema_json = Column(Text, nullable=True)
     ui_schema_json = Column(Text, nullable=True)
     auth_rules_json = Column(Text, nullable=True)
+    business_logic_json = Column(Text, nullable=True)
+    metrics_json = Column(Text, nullable=True)
+

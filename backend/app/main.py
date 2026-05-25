@@ -29,10 +29,13 @@ class SaveProjectRequest(BaseModel):
     name: str
     prompt: str
     intent_json: str
+    system_design_json: str
     database_schema_json: str
     api_schema_json: str
     ui_schema_json: str
     auth_rules_json: str
+    business_logic_json: str
+    metrics_json: str
 
 @app.post("/api/compile")
 async def compile_application(request: CompileRequest):
@@ -53,10 +56,13 @@ async def save_project(request: SaveProjectRequest, db: Session = Depends(get_db
         name=request.name,
         prompt=request.prompt,
         intent_json=request.intent_json,
+        system_design_json=request.system_design_json,
         database_schema_json=request.database_schema_json,
         api_schema_json=request.api_schema_json,
         ui_schema_json=request.ui_schema_json,
-        auth_rules_json=request.auth_rules_json
+        auth_rules_json=request.auth_rules_json,
+        business_logic_json=request.business_logic_json,
+        metrics_json=request.metrics_json
     )
     db.add(db_project)
     db.commit()
@@ -78,10 +84,13 @@ async def get_project(project_id: int, db: Session = Depends(get_db)):
         "name": project.name,
         "prompt": project.prompt,
         "intent": json.loads(project.intent_json) if project.intent_json else None,
+        "system_design": json.loads(project.system_design_json) if project.system_design_json else None,
         "database_schema": json.loads(project.database_schema_json) if project.database_schema_json else None,
         "api_schema": json.loads(project.api_schema_json) if project.api_schema_json else None,
         "ui_schema": json.loads(project.ui_schema_json) if project.ui_schema_json else None,
         "auth_rules": json.loads(project.auth_rules_json) if project.auth_rules_json else None,
+        "business_logic": json.loads(project.business_logic_json) if project.business_logic_json else None,
+        "metrics": json.loads(project.metrics_json) if project.metrics_json else None,
     }
 
 @app.get("/api/health")

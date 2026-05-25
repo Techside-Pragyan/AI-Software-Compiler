@@ -1,9 +1,8 @@
 import os
 import json
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 from google import genai
 from google.genai import types
-from app.models.schemas import ApplicationConfigSchema
 
 class RepairEngine:
     def __init__(self, api_key: str = None, max_retries: int = 3):
@@ -15,7 +14,7 @@ class RepairEngine:
         self.max_retries = max_retries
         self.metrics = {"retries": 0, "failures": []}
 
-    def repair_and_validate(self, raw_json_or_dict, schema_class=ApplicationConfigSchema):
+    def repair_and_validate(self, raw_json_or_dict, schema_class: BaseModel, validation_context: str = "", custom_validator=None):
         """
         Attempts to parse data into the Pydantic schema. If validation fails,
         uses the LLM to repair ONLY the broken parts based on the ValidationError.
@@ -31,24 +30,26 @@ class RepairEngine:
                 valid_schema = schema_class(**data)
                 
                 # Cross-reference Validation
-                self._validate_cross_references(valid_schema)
+                if custom_validator:
+                    custom_validator(valid_schema)
                 
                 return valid_schema
             
             except (ValidationError, json.JSONDecodeError, ValueError) as e:
-                self.metrics["failures"].append({"attempt": attempt, "error": str(e)})
+                self.metrics["failures"].append({"attempt": attempt, "error": str(e), "schema": schema_class.__name__})
                 if attempt == self.max_retries:
-                    raise Exception(f"Failed to repair after {self.max_retries} retries. Final error: {str(e)}")
+                    raise Exception(f"Failed to repair {schema_class.__name__} after {self.max_retries} retries. Final error: {str(e)}")
                 
                 self.metrics["retries"] += 1
                 
-                # Repair Engine Logic
+                # Selective Repair Engine Logic
                 repair_prompt = (
                     f"You are a strict JSON repair engine.\n"
-                    f"The following configuration failed schema validation or cross-reference checks.\n\n"
+                    f"The following configuration failed schema validation or cross-reference checks for {schema_class.__name__}.\n\n"
+                    f"CONTEXT:\n{validation_context}\n\n"
                     f"ERROR DETAILS:\n{str(e)}\n\n"
                     f"BROKEN DATA:\n{current_data}\n\n"
-                    f"Fix ONLY the specific fields causing the error. Preserve all valid outputs. Ensure valid references between UI components and API/DB."
+                    f"Fix ONLY the specific fields causing the error. Preserve all valid outputs."
                 )
                 
                 response = self.client.models.generate_content(
@@ -61,19 +62,3 @@ class RepairEngine:
                     ),
                 )
                 current_data = response.text
-
-    def _validate_cross_references(self, schema: ApplicationConfigSchema):
-        """
-        Advanced validation to detect missing references across DB, API, and UI layers.
-        """
-        # Validate UI Navigation against UI Pages
-        defined_routes = {page.route for page in schema.ui_schema.pages}
-        for nav in schema.ui_schema.navigation:
-            if nav not in defined_routes:
-                raise ValueError(f"Navigation item '{nav}' points to a non-existent route.")
-                
-        # Additional cross-referencing can be added here (e.g., Auth rule routes must exist)
-        for rule in schema.auth_rules:
-            for route in rule.allowed_routes:
-                if route != "*" and route not in defined_routes:
-                    pass # Warning or soft error
