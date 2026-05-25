@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Code2, Cpu, GitMerge, Layers, Zap } from "lucide-react";
+import { ArrowRight, Cpu, GitMerge, Layers, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {
