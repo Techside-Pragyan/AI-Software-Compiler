@@ -57,8 +57,15 @@ class CompilerPipeline:
         # 5. UI Schema
         logger.info("Stage 5: Generating UI Schema...")
         ui_raw = self.ui_generator.generate(system_design, api_schema)
+        
+        # DEMO INJECTION: Intentionally hallucinate a non-existent route to trigger the Repair Engine
+        import json
+        ui_dict = json.loads(ui_raw.model_dump_json())
+        if "navigation" in ui_dict:
+            ui_dict["navigation"].append("/hallucinated/admin-panel")
+        
         ui_schema = self.repair_engine.repair_and_validate(
-            raw_json_or_dict=ui_raw.model_dump_json(),
+            raw_json_or_dict=json.dumps(ui_dict),
             schema_class=type(ui_raw),
             validation_context=f"API Schema: {api_schema.model_dump_json()}",
             custom_validator=lambda s: CrossReferenceValidator.validate_ui_navigation(s)
@@ -67,8 +74,14 @@ class CompilerPipeline:
         # 6. Auth Rules
         logger.info("Stage 6: Generating Auth Rules...")
         auth_raw = self.auth_generator.generate(intent, ui_schema, api_schema)
+        
+        # DEMO INJECTION: Intentionally hallucinate a rule for a missing route
+        auth_dict = json.loads(auth_raw.model_dump_json())
+        if auth_dict.get("rules") and len(auth_dict["rules"]) > 0:
+            auth_dict["rules"][0]["allowed_routes"].append("/fake/non-existent-route")
+            
         auth_rules = self.repair_engine.repair_and_validate(
-            raw_json_or_dict=auth_raw.model_dump_json(),
+            raw_json_or_dict=json.dumps(auth_dict),
             schema_class=type(auth_raw),
             validation_context=f"UI Routes: {ui_schema.model_dump_json()}",
             custom_validator=lambda s: CrossReferenceValidator.validate_auth_against_ui_and_api(s, ui_schema, api_schema)
