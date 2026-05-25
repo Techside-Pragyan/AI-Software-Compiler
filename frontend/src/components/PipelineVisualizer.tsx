@@ -6,7 +6,8 @@ import { CheckCircle, Circle, Loader2, AlertTriangle } from "lucide-react";
 
 interface PipelineVisualizerProps {
   status: "idle" | "compiling" | "success" | "error";
-  metrics: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metrics: any;
 }
 
 const STAGES = [
@@ -70,10 +71,9 @@ export default function PipelineVisualizer({ status, metrics }: PipelineVisualiz
          <div className="mt-8 bg-red-950/20 border border-red-900/50 rounded-xl p-4">
             <h3 className="text-red-400 font-bold mb-2 flex items-center text-sm"><AlertTriangle className="w-4 h-4 mr-2" /> Repair Actions ({metrics.failures.length})</h3>
             <div className="space-y-2 max-h-32 overflow-y-auto pr-2">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {(metrics as Record<string, any>).failures.map((f: Record<string, unknown>, i: number) => (
+              {metrics.failures.map((f: any, i: number) => (
                 <div key={i} className="text-xs text-gray-300 bg-[#0f172a] p-2 rounded border border-red-900/30">
-                  <span className="text-red-400 font-bold">Attempt {f.attempt as number} ({f.schema as string}):</span> {f.error as string}
+                  <span className="text-red-400 font-bold">Attempt {f.attempt} ({f.schema}):</span> {f.error}
                 </div>
               ))}
             </div>
