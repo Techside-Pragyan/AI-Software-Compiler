@@ -1,280 +1,99 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import RuntimePreview from "@/components/RuntimePreview";
-import DatabasePreview from "@/components/DatabasePreview";
-import ApiPreview from "@/components/ApiPreview";
-import PipelineVisualizer from "@/components/PipelineVisualizer";
-import { Loader2, Zap, Layout, Code2, Database, Server, Save, FolderOpen, AlertCircle } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Code2, Cpu, GitMerge, Layers, Zap } from "lucide-react";
+import Link from "next/link";
 
-export default function Dashboard() {
-  const [prompt, setPrompt] = useState("Build a Habit Tracker app with premium tiers, daily check-ins, and Stripe integration. Include a user dashboard, a subscription form, and a chat interface.");
-  const [projectName, setProjectName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [schema, setSchema] = useState<any>(null);
-  const [metrics, setMetrics] = useState<any>(null);
-  const [error, setError] = useState("");
-  
-  const [activeTab, setActiveTab] = useState<"ui" | "db" | "api" | "metrics">("ui");
-  const [projects, setProjects] = useState<any[]>([]);
-
-  const fetchProjects = async () => {
-    try {
-      const res = await fetch("http://localhost:8000/api/projects");
-      if (res.ok) {
-        const data = await res.json();
-        setProjects(data);
-      }
-    } catch (e) {
-      console.error("Failed to fetch projects", e);
-    }
-  };
-
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const handleCompile = async () => {
-    setLoading(true);
-    setError("");
-    setSchema(null);
-    setMetrics(null);
-
-    try {
-      const res = await fetch("http://localhost:8000/api/compile", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-      
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || "Failed to build");
-      
-      setSchema(data.data);
-      setMetrics(data.metrics);
-      setActiveTab("ui");
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    if (!schema) return;
-    if (!projectName.trim()) {
-      alert("Please enter a project name before saving.");
-      return;
-    }
-    setSaving(true);
-    try {
-      const payload = {
-        name: projectName,
-        prompt: prompt,
-        intent_json: JSON.stringify(schema.intent),
-        database_schema_json: JSON.stringify(schema.database_schema),
-        api_schema_json: JSON.stringify(schema.api_schema),
-        ui_schema_json: JSON.stringify(schema.ui_schema),
-        auth_rules_json: JSON.stringify(schema.auth_rules || []),
-      };
-
-      const res = await fetch("http://localhost:8000/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error("Failed to save project");
-      alert("Project saved successfully!");
-      fetchProjects();
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const loadProject = async (id: number) => {
-    try {
-      const res = await fetch(`http://localhost:8000/api/projects/${id}`);
-      if (!res.ok) throw new Error("Failed to load project");
-      const data = await res.json();
-      setPrompt(data.prompt);
-      setProjectName(data.name);
-      setSchema({
-        intent: data.intent,
-        database_schema: data.database_schema,
-        api_schema: data.api_schema,
-        ui_schema: data.ui_schema,
-        auth_rules: data.auth_rules
-      });
-      setMetrics(null);
-    } catch (e: any) {
-      alert(e.message);
-    }
-  };
-
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen bg-[#0f172a] text-white font-sans overflow-hidden">
-      
-      {/* Sidebar */}
-      <div className="w-64 bg-[#1e293b] border-r border-[#334155] flex flex-col p-4 overflow-y-auto">
-        <div className="flex items-center space-x-3 mb-8 px-2 mt-4">
-          <Zap className="w-8 h-8 text-blue-500" />
-          <h1 className="text-2xl font-extrabold tracking-tight">App Studio</h1>
+    <div className="min-h-screen bg-[#020617] text-white overflow-hidden relative selection:bg-blue-500/30">
+      {/* Background glowing orbs */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[150px] translate-y-1/3 pointer-events-none" />
+
+      <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <Zap className="w-6 h-6 text-white" />
+          </div>
+          <span className="text-xl font-extrabold tracking-tight">App Compiler</span>
         </div>
-        
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Saved Projects</h3>
-        {projects.length === 0 ? (
-          <p className="text-sm text-gray-500 px-2 italic">No projects yet</p>
-        ) : (
-          <div className="space-y-2">
-            {projects.map((p) => (
-              <button 
-                key={p.id}
-                onClick={() => loadProject(p.id)}
-                className="w-full text-left p-3 rounded-lg hover:bg-[#334155] transition-colors flex items-center space-x-2 border border-transparent hover:border-gray-600"
-              >
-                <FolderOpen className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                <span className="text-sm text-gray-300 truncate">{p.name}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col p-8 overflow-y-auto h-screen">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
-          {/* Left Column: Input and Stats */}
-          <div className="lg:col-span-4 space-y-6 flex flex-col">
-            <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
-              <h2 className="text-xl font-bold mb-4 flex items-center"><Code2 className="w-5 h-5 mr-2 text-blue-400" /> Application Prompt</h2>
-              <textarea
-                className="w-full h-32 bg-[#0f172a] border border-[#334155] rounded-xl p-4 text-sm text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-              />
-              <button
-                onClick={handleCompile}
-                disabled={loading}
-                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Zap className="w-5 h-5 mr-2" />}
-                {loading ? "Building Application..." : "Build Application"}
-              </button>
-              {error && (
-                <div className="mt-3 p-3 bg-red-900/30 border border-red-500/50 rounded-lg flex items-start text-red-400 text-sm">
-                  <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
-                  <p>{error}</p>
-                </div>
-              )}
-            </div>
-
-            {/* Pipeline Visualizer */}
-            {(loading || schema || error) && (
-              <PipelineVisualizer 
-                status={loading ? "compiling" : error ? "error" : schema ? "success" : "idle"} 
-                metrics={metrics} 
-              />
-            )}
-            
-            {/* Save Section */}
-            {schema && (
-              <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
-                <h2 className="text-xl font-bold mb-4 flex items-center"><Save className="w-5 h-5 mr-2 text-green-400" /> Save Project</h2>
-                <input
-                  type="text"
-                  placeholder="Project Name..."
-                  value={projectName}
-                  onChange={(e) => setProjectName(e.target.value)}
-                  className="w-full bg-[#0f172a] border border-[#334155] rounded-xl p-3 text-sm text-gray-200 focus:ring-2 focus:ring-green-500 outline-none mb-4"
-                />
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
-                >
-                  {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
-                  {saving ? "Saving..." : "Save to Workspace"}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Preview Area */}
-          <div className="lg:col-span-8 bg-[#1e293b] rounded-2xl shadow-xl border border-[#334155] flex flex-col overflow-hidden h-[85vh]">
-            <div className="flex bg-[#334155]/50 border-b border-[#334155]">
-              <button 
-                onClick={() => setActiveTab("ui")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'ui' ? 'border-blue-500 text-blue-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
-              >
-                <Layout className="w-4 h-4 mr-2" /> UI Preview
-              </button>
-              <button 
-                onClick={() => setActiveTab("db")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'db' ? 'border-purple-500 text-purple-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
-              >
-                <Database className="w-4 h-4 mr-2" /> Database Schema
-              </button>
-              <button 
-                onClick={() => setActiveTab("api")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'api' ? 'border-rose-500 text-rose-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
-              >
-                <Server className="w-4 h-4 mr-2" /> API Endpoints
-              </button>
-              <button 
-                onClick={() => setActiveTab("metrics")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'metrics' ? 'border-green-500 text-green-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
-              >
-                <Database className="w-4 h-4 mr-2" /> Metrics
-              </button>
-            </div>
-            
-            <div className="flex-1 p-0 bg-gray-100 overflow-hidden relative">
-               {activeTab === "ui" && (
-                 <RuntimePreview schema={schema ? schema.ui_schema : null} />
-               )}
-               {activeTab === "db" && (
-                 <div className="h-full overflow-y-auto p-8 bg-white/50 text-gray-900">
-                   <DatabasePreview schema={schema ? schema.database_schema : null} />
-                 </div>
-               )}
-               {activeTab === "api" && (
-                 <div className="h-full overflow-y-auto p-8 bg-white/50 text-gray-900">
-                   <ApiPreview schema={schema ? schema.api_schema : null} />
-                 </div>
-               )}
-               {activeTab === "metrics" && (
-                 <div className="h-full overflow-y-auto p-8 bg-[#1e293b] text-white">
-                   <h2 className="text-2xl font-bold mb-4">Compiler Metrics</h2>
-                   {metrics ? (
-                     <div className="space-y-4">
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                         <h3 className="text-gray-400 mb-1">Total Retries</h3>
-                         <p className="text-3xl font-bold text-yellow-400">{metrics.retries}</p>
-                       </div>
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                         <h3 className="text-gray-400 mb-1">Failures Repaired</h3>
-                         <p className="text-3xl font-bold text-green-400">{metrics.failures?.length || 0}</p>
-                       </div>
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                          <h3 className="text-gray-400 mb-2">Repair Logs</h3>
-                          <pre className="text-xs text-gray-300 overflow-x-auto">
-                            {JSON.stringify(metrics.failures, null, 2)}
-                          </pre>
-                       </div>
-                     </div>
-                   ) : (
-                     <p className="text-gray-500">No metrics available. Compile an application first.</p>
-                   )}
-                 </div>
-               )}
-            </div>
-          </div>
+        <div className="flex items-center space-x-6 text-sm font-medium">
+          <a href="#" className="text-gray-400 hover:text-white transition-colors">Documentation</a>
+          <a href="#" className="text-gray-400 hover:text-white transition-colors">Architecture</a>
+          <Link href="/dashboard" className="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg backdrop-blur-md transition-all">
+            Open Studio
+          </Link>
         </div>
-      </div>
+      </nav>
+
+      <main className="relative z-10 flex flex-col items-center justify-center text-center px-4 pt-32 pb-20 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-8"
+        >
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          <span>v2.0 Multi-Stage Engine Live</span>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-6xl md:text-8xl font-black tracking-tight leading-[1.1] mb-8"
+        >
+          Compile Ideas Into <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400">
+            Software Infrastructure.
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed"
+        >
+          A deterministic AI compiler pipeline that transforms natural language into production-grade UI, API, and Database schemas with self-healing validation.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex items-center justify-center space-x-4"
+        >
+          <Link href="/dashboard" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 flex items-center transition-all group">
+            Start Compiling
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Link>
+          <a href="https://github.com/pragyan/AI-Software-Compiler" className="px-8 py-4 bg-[#1e293b] hover:bg-[#334155] border border-[#334155] text-white rounded-xl font-bold transition-all">
+            View Source
+          </a>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="mt-32 grid grid-cols-1 md:grid-cols-3 gap-8 w-full text-left"
+        >
+          {[
+            { icon: Layers, title: "Multi-Stage Pipeline", desc: "No single-prompt generation. Step-by-step orchestration ensures deterministic output." },
+            { icon: GitMerge, title: "Cross-Layer Validation", desc: "Strict heuristic checks ensure UI pages map to valid API endpoints and database schemas." },
+            { icon: Cpu, title: "Selective Repair Engine", desc: "Automatically detects validation errors and repairs only the broken schema layer." }
+          ].map((feature, i) => (
+            <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors backdrop-blur-sm group">
+              <feature.icon className="w-10 h-10 text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
+              <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+              <p className="text-gray-400 leading-relaxed text-sm">{feature.desc}</p>
+            </div>
+          ))}
+        </motion.div>
+      </main>
     </div>
   );
 }
