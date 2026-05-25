@@ -21,7 +21,7 @@ export default function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects`);
       if (res.ok) {
         const data = await res.json();
@@ -43,7 +43,7 @@ export default function Dashboard() {
     setMetrics(null);
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/compile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -81,7 +81,7 @@ export default function Dashboard() {
         auth_rules_json: JSON.stringify(schema.auth_rules || []),
       };
 
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,7 +100,7 @@ export default function Dashboard() {
 
   const loadProject = async (id: number) => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const API_URL = "https://ai-software-compiler-ct1g.onrender.com";
       const res = await fetch(`${API_URL}/api/projects/${id}`);
       if (!res.ok) throw new Error("Failed to load project");
       const data = await res.json();
