@@ -16,7 +16,7 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState<any>(null);
   const [error, setError] = useState("");
   
-  const [activeTab, setActiveTab] = useState<"ui" | "db" | "api">("ui");
+  const [activeTab, setActiveTab] = useState<"ui" | "db" | "api" | "metrics">("ui");
   const [projects, setProjects] = useState<any[]>([]);
 
   const fetchProjects = async () => {
