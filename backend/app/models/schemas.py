@@ -91,6 +91,9 @@ class AuthRuleSchema(BaseModel):
     allowed_routes: List[str]
     restricted_actions: List[str]
 
+class AuthRulesSchema(BaseModel):
+    rules: List[AuthRuleSchema]
+
 class BusinessLogicRuleSchema(BaseModel):
     name: str
     condition: str
@@ -106,5 +109,5 @@ class ApplicationConfigSchema(BaseModel):
     database_schema: DatabaseSchema
     api_schema: ApiSchema
     ui_schema: UiSchema
-    auth_rules: List[AuthRuleSchema]
+    auth_rules: AuthRulesSchema
     business_logic: BusinessLogicSchema
