@@ -8,7 +8,7 @@ import PipelineVisualizer from "@/components/PipelineVisualizer";
 import { Loader2, Zap, Layout, Code2, Database, Server, Save, FolderOpen, AlertCircle, Download } from "lucide-react";
 
 export default function Dashboard() {
-  const [prompt, setPrompt] = useState("Build a Habit Tracker app with premium tiers, daily check-ins, and Stripe integration. Include a user dashboard, a subscription form, and a chat interface.");
+  const [prompt, setPrompt] = useState("Build a CRM with login, admin dashboard, payments, and analytics");
   const [projectName, setProjectName] = useState("");
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -131,16 +131,21 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#0f172a] text-white font-sans overflow-hidden">
-      
+    <div className="flex min-h-screen bg-[#020617] text-white font-sans overflow-hidden relative selection:bg-blue-500/30">
+      {/* Background glowing orbs */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[150px] translate-y-1/3 pointer-events-none" />
+
       {/* Sidebar */}
-      <div className="w-64 bg-[#1e293b] border-r border-[#334155] flex flex-col p-4 overflow-y-auto">
+      <div className="w-64 relative z-10 bg-[#0f172a]/60 backdrop-blur-2xl border-r border-white/5 flex flex-col p-4 overflow-y-auto shadow-2xl">
         <div className="flex items-center space-x-3 mb-8 px-2 mt-4">
-          <Zap className="w-8 h-8 text-blue-500" />
-          <h1 className="text-2xl font-extrabold tracking-tight">App Studio</h1>
+          <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <Zap className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-xl font-extrabold tracking-tight">App Studio</h1>
         </div>
         
-        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-2">Saved Projects</h3>
+        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 px-2">Saved Projects</h3>
         {projects.length === 0 ? (
           <p className="text-sm text-gray-500 px-2 italic">No projects yet</p>
         ) : (
@@ -149,10 +154,10 @@ export default function Dashboard() {
               <button 
                 key={p.id}
                 onClick={() => loadProject(p.id)}
-                className="w-full text-left p-3 rounded-lg hover:bg-[#334155] transition-colors flex items-center space-x-2 border border-transparent hover:border-gray-600"
+                className="w-full text-left p-3 rounded-xl hover:bg-white/5 transition-all flex items-center space-x-3 border border-transparent hover:border-white/10 group"
               >
-                <FolderOpen className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                <span className="text-sm text-gray-300 truncate">{p.name}</span>
+                <FolderOpen className="w-4 h-4 text-blue-400 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="text-sm text-gray-300 truncate font-medium">{p.name}</span>
               </button>
             ))}
           </div>
@@ -160,27 +165,28 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col p-8 overflow-y-auto h-screen">
+      <div className="flex-1 flex flex-col p-8 overflow-y-auto h-screen relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
           {/* Left Column: Input and Stats */}
           <div className="lg:col-span-4 space-y-6 flex flex-col">
-            <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/10 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               <h2 className="text-xl font-bold mb-4 flex items-center"><Code2 className="w-5 h-5 mr-2 text-blue-400" /> Application Prompt</h2>
               <textarea
-                className="w-full h-32 bg-[#0f172a] border border-[#334155] rounded-xl p-4 text-sm text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                className="w-full h-32 bg-black/40 border border-white/10 rounded-xl p-4 text-sm text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none resize-none shadow-inner"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
               />
               <button
                 onClick={handleCompile}
                 disabled={loading}
-                className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
+                className="mt-6 w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center transition-all transform hover:scale-[1.02] shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:hover:scale-100"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Zap className="w-5 h-5 mr-2" />}
                 {loading ? "Building Application..." : "Build Application"}
               </button>
               {error && (
-                <div className="mt-3 p-3 bg-red-900/30 border border-red-500/50 rounded-lg flex items-start text-red-400 text-sm">
+                <div className="mt-4 p-4 bg-red-950/40 border border-red-500/30 rounded-xl flex items-start text-red-400 text-sm backdrop-blur-md">
                   <AlertCircle className="w-4 h-4 mr-2 flex-shrink-0 mt-0.5" />
                   <p>{error}</p>
                 </div>
@@ -197,27 +203,27 @@ export default function Dashboard() {
             
             {/* Save Section */}
             {schema && (
-              <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/10 relative overflow-hidden mt-6">
                 <h2 className="text-xl font-bold mb-4 flex items-center"><Save className="w-5 h-5 mr-2 text-green-400" /> Save Project</h2>
                 <input
                   type="text"
                   placeholder="Project Name..."
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
-                  className="w-full bg-[#0f172a] border border-[#334155] rounded-xl p-3 text-sm text-gray-200 focus:ring-2 focus:ring-green-500 outline-none mb-4"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm text-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all outline-none mb-4 shadow-inner"
                 />
                 <div className="flex space-x-3">
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
+                    className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl flex items-center justify-center transition-all shadow-lg shadow-green-500/20 disabled:opacity-50"
                   >
                     {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
                     {saving ? "Saving..." : "Save"}
                   </button>
                   <button
                     onClick={handleExport}
-                    className="flex-1 bg-[#334155] hover:bg-[#475569] text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all"
+                    className="flex-1 bg-white/10 hover:bg-white/20 border border-white/5 text-white font-bold py-3 rounded-xl flex items-center justify-center transition-all backdrop-blur-md"
                   >
                     <Download className="w-5 h-5 mr-2" />
                     Export JSON
@@ -228,35 +234,35 @@ export default function Dashboard() {
           </div>
 
           {/* Right Column: Preview Area */}
-          <div className="lg:col-span-8 bg-[#1e293b] rounded-2xl shadow-xl border border-[#334155] flex flex-col overflow-hidden h-[85vh]">
-            <div className="flex bg-[#334155]/50 border-b border-[#334155]">
+          <div className="lg:col-span-8 bg-[#0f172a]/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden h-[85vh]">
+            <div className="flex bg-black/20 p-2 space-x-2 border-b border-white/10">
               <button 
                 onClick={() => setActiveTab("ui")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'ui' ? 'border-blue-500 text-blue-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
+                className={`flex-1 flex items-center justify-center py-3 px-4 text-sm font-bold rounded-xl transition-all duration-200 ${activeTab === 'ui' ? 'bg-blue-500/20 text-blue-400 shadow-inner border border-blue-500/30' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'}`}
               >
                 <Layout className="w-4 h-4 mr-2" /> UI Preview
               </button>
               <button 
                 onClick={() => setActiveTab("db")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'db' ? 'border-purple-500 text-purple-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
+                className={`flex-1 flex items-center justify-center py-3 px-4 text-sm font-bold rounded-xl transition-all duration-200 ${activeTab === 'db' ? 'bg-purple-500/20 text-purple-400 shadow-inner border border-purple-500/30' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'}`}
               >
                 <Database className="w-4 h-4 mr-2" /> Database Schema
               </button>
               <button 
                 onClick={() => setActiveTab("api")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'api' ? 'border-rose-500 text-rose-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
+                className={`flex-1 flex items-center justify-center py-3 px-4 text-sm font-bold rounded-xl transition-all duration-200 ${activeTab === 'api' ? 'bg-rose-500/20 text-rose-400 shadow-inner border border-rose-500/30' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'}`}
               >
                 <Server className="w-4 h-4 mr-2" /> API Endpoints
               </button>
               <button 
                 onClick={() => setActiveTab("metrics")}
-                className={`flex-1 flex items-center justify-center py-4 text-sm font-bold border-b-2 transition-colors ${activeTab === 'metrics' ? 'border-green-500 text-green-400 bg-[#334155]' : 'border-transparent text-gray-400 hover:text-gray-200 hover:bg-[#334155]/50'}`}
+                className={`flex-1 flex items-center justify-center py-3 px-4 text-sm font-bold rounded-xl transition-all duration-200 ${activeTab === 'metrics' ? 'bg-green-500/20 text-green-400 shadow-inner border border-green-500/30' : 'text-gray-400 hover:text-gray-200 hover:bg-white/5 border border-transparent'}`}
               >
                 <Database className="w-4 h-4 mr-2" /> Metrics
               </button>
             </div>
             
-            <div className="flex-1 p-0 bg-gray-100 overflow-hidden relative">
+            <div className="flex-1 p-0 bg-[#0f172a]/50 overflow-hidden relative">
                {activeTab === "ui" && (
                  <RuntimePreview schema={schema ? schema.ui_schema : null} />
                )}
@@ -271,27 +277,34 @@ export default function Dashboard() {
                  </div>
                )}
                {activeTab === "metrics" && (
-                 <div className="h-full overflow-y-auto p-8 bg-[#1e293b] text-white">
-                   <h2 className="text-2xl font-bold mb-4">Compiler Metrics</h2>
+                 <div className="h-full overflow-y-auto p-8 bg-transparent text-white">
+                   <h2 className="text-2xl font-black mb-6 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Compiler Metrics</h2>
                    {metrics ? (
-                     <div className="space-y-4">
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                         <h3 className="text-gray-400 mb-1">Total Retries</h3>
-                         <p className="text-3xl font-bold text-yellow-400">{metrics.retries}</p>
+                     <div className="space-y-6">
+                       <div className="grid grid-cols-2 gap-6">
+                         <div className="bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-xl">
+                           <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-2">Total Retries</h3>
+                           <p className="text-5xl font-black text-yellow-400 drop-shadow-md">{metrics.retries}</p>
+                         </div>
+                         <div className="bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-xl">
+                           <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-2">Failures Repaired</h3>
+                           <p className="text-5xl font-black text-green-400 drop-shadow-md">{metrics.failures?.length || 0}</p>
+                         </div>
                        </div>
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                         <h3 className="text-gray-400 mb-1">Failures Repaired</h3>
-                         <p className="text-3xl font-bold text-green-400">{metrics.failures?.length || 0}</p>
-                       </div>
-                       <div className="bg-[#0f172a] p-4 rounded-xl border border-[#334155]">
-                          <h3 className="text-gray-400 mb-2">Repair Logs</h3>
-                          <pre className="text-xs text-gray-300 overflow-x-auto">
-                            {JSON.stringify(metrics.failures, null, 2)}
-                          </pre>
+                       <div className="bg-black/40 backdrop-blur-md p-6 rounded-2xl border border-white/10 shadow-xl">
+                          <h3 className="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-4 flex items-center"><Zap className="w-4 h-4 mr-2 text-blue-400" /> Repair Logs</h3>
+                          <div className="bg-[#020617] rounded-xl p-4 border border-white/5 overflow-x-auto">
+                            <pre className="text-xs text-blue-300 font-mono leading-relaxed">
+                              {JSON.stringify(metrics.failures, null, 2)}
+                            </pre>
+                          </div>
                        </div>
                      </div>
                    ) : (
-                     <p className="text-gray-500">No metrics available. Compile an application first.</p>
+                     <div className="flex flex-col items-center justify-center h-64 text-center">
+                       <Database className="w-12 h-12 text-gray-600 mb-4" />
+                       <p className="text-gray-400 font-medium">No metrics available.<br/>Compile an application to generate telemetry.</p>
+                     </div>
                    )}
                  </div>
                )}
