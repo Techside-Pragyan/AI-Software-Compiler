@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import RuntimePreview from "@/components/RuntimePreview";
 import DatabasePreview from "@/components/DatabasePreview";
 import ApiPreview from "@/components/ApiPreview";
+import PipelineVisualizer from "@/components/PipelineVisualizer";
 import { Loader2, Zap, Layout, Code2, Database, Server, Save, FolderOpen, AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
@@ -171,24 +172,12 @@ export default function Dashboard() {
               )}
             </div>
 
-            {/* Metrics */}
-            {metrics && (
-              <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
-                <h2 className="text-xl font-bold mb-4 flex items-center"><Database className="w-5 h-5 mr-2 text-purple-400" /> Build Metrics</h2>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center bg-[#0f172a] p-3 rounded-lg border border-[#334155]">
-                    <span className="text-gray-400 text-sm">Validation Engine Retries</span>
-                    <span className={`font-bold ${metrics.retries > 0 ? "text-yellow-400" : "text-green-400"}`}>
-                      {metrics.retries}
-                    </span>
-                  </div>
-                  {metrics.failures?.length > 0 && (
-                    <div className="text-xs text-red-400 bg-red-950/30 p-3 rounded-lg border border-red-900/50 max-h-32 overflow-auto">
-                      Repair Engine triggered {metrics.failures.length} times to fix validation failures.
-                    </div>
-                  )}
-                </div>
-              </div>
+            {/* Pipeline Visualizer */}
+            {(loading || schema || error) && (
+              <PipelineVisualizer 
+                status={loading ? "compiling" : error ? "error" : schema ? "success" : "idle"} 
+                metrics={metrics} 
+              />
             )}
             
             {/* Save Section */}
