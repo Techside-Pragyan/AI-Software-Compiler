@@ -17,11 +17,27 @@ class Role(BaseModel):
 
 class IntentSchema(BaseModel):
     app_type: str = Field(description="The type of application (e.g., SaaS, Marketplace, Internal Tool)")
-    modules: List[str] = Field(description="List of core modules/features")
-    entities: List[Entity] = Field(description="Core data entities identified from the prompt")
+    features: List[str] = Field(description="List of core features")
     roles: List[Role] = Field(description="User roles identified")
-    workflows: List[str] = Field(description="Key workflows in the application")
-    feature_requirements: List[str] = Field(description="Specific feature requirements mentioned")
+    entities: List[Entity] = Field(description="Core data entities identified from the prompt")
+
+# ==========================================
+# STAGE 2: SYSTEM DESIGN SCHEMAS
+# ==========================================
+
+class ServiceSchema(BaseModel):
+    name: str
+    description: str
+    dependencies: List[str] = Field(default_factory=list)
+
+class FlowSchema(BaseModel):
+    name: str
+    steps: List[str]
+
+class SystemDesignSchema(BaseModel):
+    services: List[ServiceSchema]
+    flows: List[FlowSchema]
+    architecture_modules: List[str]
 
 # ==========================================
 # STAGE 3: APPLICATION CONFIG SCHEMAS
@@ -75,9 +91,20 @@ class AuthRuleSchema(BaseModel):
     allowed_routes: List[str]
     restricted_actions: List[str]
 
+class BusinessLogicRuleSchema(BaseModel):
+    name: str
+    condition: str
+    action: str
+    requires_subscription: bool = False
+
+class BusinessLogicSchema(BaseModel):
+    rules: List[BusinessLogicRuleSchema]
+
 class ApplicationConfigSchema(BaseModel):
     intent: IntentSchema
+    system_design: SystemDesignSchema
     database_schema: DatabaseSchema
     api_schema: ApiSchema
     ui_schema: UiSchema
     auth_rules: List[AuthRuleSchema]
+    business_logic: BusinessLogicSchema
