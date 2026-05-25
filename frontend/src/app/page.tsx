@@ -5,7 +5,7 @@ import RuntimePreview from "@/components/RuntimePreview";
 import { Loader2, Zap, Layout, Code2, Database } from "lucide-react";
 
 export default function Dashboard() {
-  const [prompt, setPrompt] = useState("Build an AI Motivation Coach with premium tiers, daily check-ins, and Stripe integration. Include a user dashboard, a subscription form, and an AI chat interface.");
+  const [prompt, setPrompt] = useState("Build a Habit Tracker app with premium tiers, daily check-ins, and Stripe integration. Include a user dashboard, a subscription form, and a chat interface.");
   const [loading, setLoading] = useState(false);
   const [schema, setSchema] = useState<any>(null);
   const [metrics, setMetrics] = useState<any>(null);
@@ -40,7 +40,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#0f172a] text-white font-sans p-8 flex flex-col">
       <header className="mb-8 flex items-center space-x-3">
         <Zap className="w-8 h-8 text-blue-500" />
-        <h1 className="text-3xl font-extrabold tracking-tight">Nexus App Compiler</h1>
+        <h1 className="text-3xl font-extrabold tracking-tight">App Studio</h1>
         <span className="bg-blue-500/20 text-blue-400 text-xs px-2 py-1 rounded-full font-medium">Pipeline v1.0</span>
       </header>
 
@@ -60,7 +60,7 @@ export default function Dashboard() {
               className="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl flex items-center justify-center transition-all disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Zap className="w-5 h-5 mr-2" />}
-              {loading ? "Compiling Application..." : "Compile Application"}
+              {loading ? "Building Application..." : "Build Application"}
             </button>
             {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
           </div>
@@ -68,7 +68,7 @@ export default function Dashboard() {
           {/* Metrics */}
           {metrics && (
             <div className="bg-[#1e293b] rounded-2xl p-6 shadow-xl border border-[#334155]">
-              <h2 className="text-xl font-bold mb-4 flex items-center"><Database className="w-5 h-5 mr-2" /> Compiler Metrics</h2>
+              <h2 className="text-xl font-bold mb-4 flex items-center"><Database className="w-5 h-5 mr-2" /> Build Metrics</h2>
               <div className="space-y-3">
                 <div className="flex justify-between items-center bg-[#0f172a] p-3 rounded-lg border border-[#334155]">
                   <span className="text-gray-400 text-sm">Validation Engine Retries</span>
